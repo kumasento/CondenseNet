@@ -12,68 +12,149 @@ import warnings
 import models
 from utils import convert_model, measure_model
 
-parser = argparse.ArgumentParser(description='PyTorch Condensed Convolutional Networks')
-parser.add_argument('data', metavar='DIR',
-                    help='path to dataset')
-parser.add_argument('--model', default='condensenet', type=str, metavar='M',
+parser = argparse.ArgumentParser(
+    description='PyTorch Condensed Convolutional Networks')
+parser.add_argument('data', metavar='DIR', help='path to dataset')
+parser.add_argument('--model',
+                    default='condensenet',
+                    type=str,
+                    metavar='M',
                     help='model to train the dataset')
-parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
+parser.add_argument('-j',
+                    '--workers',
+                    default=8,
+                    type=int,
+                    metavar='N',
                     help='number of data loading workers (default: 4)')
-parser.add_argument('--epochs', default=120, type=int, metavar='N',
+parser.add_argument('--epochs',
+                    default=120,
+                    type=int,
+                    metavar='N',
                     help='number of total epochs to run')
-parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
+parser.add_argument('--start-epoch',
+                    default=0,
+                    type=int,
+                    metavar='N',
                     help='manual epoch number (useful on restarts)')
-parser.add_argument('-b', '--batch-size', default=256, type=int,
-                    metavar='N', help='mini-batch size (default: 256)')
-parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
-                    metavar='LR', help='initial learning rate (default: 0.1)')
-parser.add_argument('--lr-type', default='cosine', type=str, metavar='T',
+parser.add_argument('-b',
+                    '--batch-size',
+                    default=256,
+                    type=int,
+                    metavar='N',
+                    help='mini-batch size (default: 256)')
+parser.add_argument('--lr',
+                    '--learning-rate',
+                    default=0.1,
+                    type=float,
+                    metavar='LR',
+                    help='initial learning rate (default: 0.1)')
+parser.add_argument('--lr-type',
+                    default='cosine',
+                    type=str,
+                    metavar='T',
                     help='learning rate strategy (default: cosine)',
                     choices=['cosine', 'multistep'])
-parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
+parser.add_argument('--momentum',
+                    default=0.9,
+                    type=float,
+                    metavar='M',
                     help='momentum (default: 0.9)')
-parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float,
-                    metavar='W', help='weight decay (default: 1e-4)')
-parser.add_argument('--print-freq', '-p', default=10, type=int,
-                    metavar='N', help='print frequency (default: 10)')
-parser.add_argument('--pretrained', dest='pretrained', action='store_true',
+parser.add_argument('--weight-decay',
+                    '--wd',
+                    default=1e-4,
+                    type=float,
+                    metavar='W',
+                    help='weight decay (default: 1e-4)')
+parser.add_argument('--print-freq',
+                    '-p',
+                    default=10,
+                    type=int,
+                    metavar='N',
+                    help='print frequency (default: 10)')
+parser.add_argument('--pretrained',
+                    dest='pretrained',
+                    action='store_true',
                     help='use pre-trained model (default: false)')
-parser.add_argument('--no-save-model', dest='no_save_model', action='store_true',
+parser.add_argument('--no-save-model',
+                    dest='no_save_model',
+                    action='store_true',
                     help='only save best model (default: false)')
-parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
+parser.add_argument('--manual-seed',
+                    default=0,
+                    type=int,
+                    metavar='N',
                     help='manual seed (default: 0)')
-parser.add_argument('--gpu',
-                    help='gpu available')
+parser.add_argument('--gpu', help='gpu available')
 
-parser.add_argument('--savedir', type=str, metavar='PATH', default='results/savedir',
-                    help='path to save result and checkpoint (default: results/savedir)')
-parser.add_argument('--resume', action='store_true',
+parser.add_argument(
+    '--savedir',
+    type=str,
+    metavar='PATH',
+    default='results/savedir',
+    help='path to save result and checkpoint (default: results/savedir)')
+parser.add_argument('--dataset-dir',
+                    type=str,
+                    default=None,
+                    help='Where to load the dataset')
+parser.add_argument('--resume',
+                    action='store_true',
                     help='use latest checkpoint if have any (default: none)')
 
-parser.add_argument('--stages', type=str, metavar='STAGE DEPTH',
+parser.add_argument('--stages',
+                    type=str,
+                    metavar='STAGE DEPTH',
                     help='per layer depth')
-parser.add_argument('--bottleneck', default=4, type=int, metavar='B',
+parser.add_argument('--bottleneck',
+                    default=4,
+                    type=int,
+                    metavar='B',
                     help='bottleneck (default: 4)')
-parser.add_argument('--group-1x1', type=int, metavar='G', default=4,
+parser.add_argument('--group-1x1',
+                    type=int,
+                    metavar='G',
+                    default=4,
                     help='1x1 group convolution (default: 4)')
-parser.add_argument('--group-3x3', type=int, metavar='G', default=4,
+parser.add_argument('--group-3x3',
+                    type=int,
+                    metavar='G',
+                    default=4,
                     help='3x3 group convolution (default: 4)')
-parser.add_argument('--condense-factor', type=int, metavar='C', default=4,
+parser.add_argument('--condense-factor',
+                    type=int,
+                    metavar='C',
+                    default=4,
                     help='condense factor (default: 4)')
-parser.add_argument('--growth', type=str, metavar='GROWTH RATE',
+parser.add_argument('--growth',
+                    type=str,
+                    metavar='GROWTH RATE',
                     help='per layer growth')
-parser.add_argument('--reduction', default=0.5, type=float, metavar='R',
+parser.add_argument('--reduction',
+                    default=0.5,
+                    type=float,
+                    metavar='R',
                     help='transition reduction (default: 0.5)')
-parser.add_argument('--dropout-rate', default=0, type=float,
+parser.add_argument('--dropout-rate',
+                    default=0,
+                    type=float,
                     help='drop out (default: 0)')
-parser.add_argument('--group-lasso-lambda', default=0., type=float, metavar='LASSO',
+parser.add_argument('--group-lasso-lambda',
+                    default=0.,
+                    type=float,
+                    metavar='LASSO',
                     help='group lasso loss weight (default: 0)')
 
-parser.add_argument('--evaluate', action='store_true',
+parser.add_argument('--evaluate',
+                    action='store_true',
                     help='evaluate model on validation set (default: false)')
-parser.add_argument('--convert-from', default=None, type=str, metavar='PATH',
+parser.add_argument('--convert-from',
+                    default=None,
+                    type=str,
+                    metavar='PATH',
                     help='path to saved checkpoint (default: none)')
-parser.add_argument('--evaluate-from', default=None, type=str, metavar='PATH',
+parser.add_argument('--evaluate-from',
+                    default=None,
+                    type=str,
+                    metavar='PATH',
                     help='path to saved checkpoint (default: none)')
 
 args = parser.parse_args()
@@ -121,7 +202,7 @@ def main():
     print('FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6))
     args.filename = "%s_%s_%s.txt" % \
         (args.model, int(n_params), int(n_flops))
-    del(model)
+    del (model)
     print(args)
 
     ### Create model
@@ -135,7 +216,8 @@ def main():
 
     ### Define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    optimizer = torch.optim.SGD(model.parameters(),
+                                args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
                                 nesterov=True)
@@ -169,18 +251,22 @@ def main():
 
     cudnn.benchmark = True
 
-    ### Data loading 
+    ### Data loading
+    dataset_dir = args.dataset_dir if args.dataset_dir is not None else '../data'
     if args.data == "cifar10":
         normalize = transforms.Normalize(mean=[0.4914, 0.4824, 0.4467],
                                          std=[0.2471, 0.2435, 0.2616])
-        train_set = datasets.CIFAR10('../data', train=True, download=True,
+        train_set = datasets.CIFAR10(dataset_dir,
+                                     train=True,
+                                     download=True,
                                      transform=transforms.Compose([
                                          transforms.RandomCrop(32, padding=4),
                                          transforms.RandomHorizontalFlip(),
                                          transforms.ToTensor(),
                                          normalize,
                                      ]))
-        val_set = datasets.CIFAR10('../data', train=False,
+        val_set = datasets.CIFAR10(dataset_dir,
+                                   train=False,
                                    transform=transforms.Compose([
                                        transforms.ToTensor(),
                                        normalize,
@@ -188,46 +274,55 @@ def main():
     elif args.data == "cifar100":
         normalize = transforms.Normalize(mean=[0.5071, 0.4867, 0.4408],
                                          std=[0.2675, 0.2565, 0.2761])
-        train_set = datasets.CIFAR100('../data', train=True, download=True,
-                                     transform=transforms.Compose([
-                                         transforms.RandomCrop(32, padding=4),
-                                         transforms.RandomHorizontalFlip(),
-                                         transforms.ToTensor(),
-                                         normalize,
-                                     ]))
-        val_set = datasets.CIFAR100('../data', train=False,
-                                   transform=transforms.Compose([
-                                       transforms.ToTensor(),
-                                       normalize,
-                                   ]))
+        train_set = datasets.CIFAR100(dataset_dir,
+                                      train=True,
+                                      download=True,
+                                      transform=transforms.Compose([
+                                          transforms.RandomCrop(32, padding=4),
+                                          transforms.RandomHorizontalFlip(),
+                                          transforms.ToTensor(),
+                                          normalize,
+                                      ]))
+        val_set = datasets.CIFAR100(dataset_dir,
+                                    train=False,
+                                    transform=transforms.Compose([
+                                        transforms.ToTensor(),
+                                        normalize,
+                                    ]))
     else:
         traindir = os.path.join(args.data, 'train')
         valdir = os.path.join(args.data, 'val')
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
-        train_set = datasets.ImageFolder(traindir, transforms.Compose([
-            transforms.RandomSizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            normalize,
-        ]))
+        train_set = datasets.ImageFolder(
+            traindir,
+            transforms.Compose([
+                transforms.RandomSizedCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                normalize,
+            ]))
 
-        val_set = datasets.ImageFolder(valdir, transforms.Compose([
-            transforms.Scale(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            normalize,
-        ]))
+        val_set = datasets.ImageFolder(
+            valdir,
+            transforms.Compose([
+                transforms.Scale(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                normalize,
+            ]))
 
-    train_loader = torch.utils.data.DataLoader(
-        train_set,
-        batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
+    train_loader = torch.utils.data.DataLoader(train_set,
+                                               batch_size=args.batch_size,
+                                               shuffle=True,
+                                               num_workers=args.workers,
+                                               pin_memory=True)
 
-    val_loader = torch.utils.data.DataLoader(
-        val_set,
-        batch_size=args.batch_size, shuffle=False,
-        num_workers=args.workers, pin_memory=True)
+    val_loader = torch.utils.data.DataLoader(val_set,
+                                             batch_size=args.batch_size,
+                                             shuffle=False,
+                                             num_workers=args.workers,
+                                             pin_memory=True)
 
     if args.evaluate:
         validate(val_loader, model, criterion)
@@ -245,13 +340,15 @@ def main():
         is_best = val_prec1 < best_prec1
         best_prec1 = max(val_prec1, best_prec1)
         model_filename = 'checkpoint_%03d.pth.tar' % epoch
-        save_checkpoint({
-            'epoch': epoch,
-            'model': args.model,
-            'state_dict': model.state_dict(),
-            'best_prec1': best_prec1,
-            'optimizer': optimizer.state_dict(),
-        }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f %.4f %.4f\n" %
+        save_checkpoint(
+            {
+                'epoch': epoch,
+                'model': args.model,
+                'state_dict': model.state_dict(),
+                'best_prec1': best_prec1,
+                'optimizer': optimizer.state_dict(),
+            }, args, is_best, model_filename,
+            "%.4f %.4f %.4f %.4f %.4f %.4f\n" %
             (val_prec1, val_prec5, tr_prec1, tr_prec5, loss, lr))
 
     ### Convert model and test
@@ -287,8 +384,12 @@ def train(train_loader, model, criterion, optimizer, epoch):
             (args.epochs * len(train_loader))
         args.progress = progress
         ### Adjust learning rate
-        lr = adjust_learning_rate(optimizer, epoch, args, batch=i,
-                                  nBatch=len(train_loader), method=args.lr_type)
+        lr = adjust_learning_rate(optimizer,
+                                  epoch,
+                                  args,
+                                  batch=i,
+                                  nBatch=len(train_loader),
+                                  method=args.lr_type)
         if running_lr is None:
             running_lr = lr
 
@@ -332,9 +433,15 @@ def train(train_loader, model, criterion, optimizer, epoch):
                   'Loss {loss.val:.4f}\t'  # ({loss.avg:.4f}) '
                   'Prec@1 {top1.val:.3f}\t'  # ({top1.avg:.3f}) '
                   'Prec@5 {top5.val:.3f}\t'  # ({top5.avg:.3f})'
-                  'lr {lr: .4f}'.format(
-                      epoch, i, len(train_loader), batch_time=batch_time,
-                      data_time=data_time, loss=losses, top1=top1, top5=top5, lr=lr))
+                  'lr {lr: .4f}'.format(epoch,
+                                        i,
+                                        len(train_loader),
+                                        batch_time=batch_time,
+                                        data_time=data_time,
+                                        loss=losses,
+                                        top1=top1,
+                                        top5=top5,
+                                        lr=lr))
     return 100. - top1.avg, 100. - top5.avg, losses.avg, running_lr
 
 
@@ -373,11 +480,15 @@ def validate(val_loader, model, criterion):
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
                   'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t'
                   'Prec@5 {top5.val:.3f} ({top5.avg:.3f})'.format(
-                      i, len(val_loader), batch_time=batch_time, loss=losses,
-                      top1=top1, top5=top5))
+                      i,
+                      len(val_loader),
+                      batch_time=batch_time,
+                      loss=losses,
+                      top1=top1,
+                      top5=top5))
 
-    print(' * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f}'
-          .format(top1=top1, top5=top5))
+    print(' * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f}'.format(top1=top1,
+                                                                  top5=top5))
 
     return 100. - top1.avg, 100. - top5.avg
 
@@ -422,6 +533,7 @@ def save_checkpoint(state, args, is_best, filename, result):
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
+
     def __init__(self):
         self.reset()
 
@@ -438,8 +550,12 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def adjust_learning_rate(optimizer, epoch, args, batch=None,
-                         nBatch=None, method='cosine'):
+def adjust_learning_rate(optimizer,
+                         epoch,
+                         args,
+                         batch=None,
+                         nBatch=None,
+                         method='cosine'):
     if method == 'cosine':
         T_total = args.epochs * nBatch
         T_cur = (epoch % args.epochs) * nBatch + batch
@@ -453,7 +569,7 @@ def adjust_learning_rate(optimizer, epoch, args, batch=None,
                 lr *= decay_rate
         else:
             """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-            lr = args.lr * (0.1 ** (epoch // 30))
+            lr = args.lr * (0.1**(epoch // 30))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     return lr
