@@ -104,34 +104,34 @@ For detailed options, please `python main.py --help`
 
 ### Results on ImageNet
 
-| Model | FLOPs | Params | Top-1 Err. | Top-5 Err. | Pytorch Model |
-|---|---|---|---|---|---|
-| CondenseNet-74 (C=G=4) | 529M | 4.8M | 26.2 | 8.3 | [Download (18.69M)](https://www.dropbox.com/s/sj26rm4so3uhdmg/converted_condensenet_4.pth.tar?dl=0) |
-| CondenseNet-74 (C=G=8) | 274M | 2.9M | 29.0 | 10.0 | [Download (11.68M)](https://www.dropbox.com/s/aj1xpd6zcnclous/converted_condensenet_8.pth.tar?dl=0) |
+| Model                  | FLOPs | Params | Top-1 Err. | Top-5 Err. | Pytorch Model                                                                                       |
+| ---------------------- | ----- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| CondenseNet-74 (C=G=4) | 529M  | 4.8M   | 26.2       | 8.3        | [Download (18.69M)](https://www.dropbox.com/s/sj26rm4so3uhdmg/converted_condensenet_4.pth.tar?dl=0) |
+| CondenseNet-74 (C=G=8) | 274M  | 2.9M   | 29.0       | 10.0       | [Download (11.68M)](https://www.dropbox.com/s/aj1xpd6zcnclous/converted_condensenet_8.pth.tar?dl=0) |
 
 ### Results on CIFAR
 
-| Model | FLOPs | Params | CIFAR-10 | CIFAR-100 |
-|---|---|---|---|---|
-| CondenseNet-50 | 28.6M | 0.22M | 6.22 | - |
-| CondenseNet-74 | 51.9M | 0.41M | 5.28 | - |
-| CondenseNet-86 | 65.8M | 0.52M | 5.06 | 23.64 |
-| CondenseNet-98 | 81.3M | 0.65M | 4.83 | - |
-| CondenseNet-110 | 98.2M | 0.79M | 4.63 | - |
-| CondenseNet-122 | 116.7M | 0.95M | 4.48 | - |
-| CondenseNet-182* | 513M | 4.2M | 3.76 | 18.47 |
+| Model            | FLOPs  | Params | CIFAR-10 | CIFAR-100 |
+| ---------------- | ------ | ------ | -------- | --------- |
+| CondenseNet-50   | 28.6M  | 0.22M  | 6.22     | -         |
+| CondenseNet-74   | 51.9M  | 0.41M  | 5.28     | -         |
+| CondenseNet-86   | 65.8M  | 0.52M  | 5.06     | 23.64     |
+| CondenseNet-98   | 81.3M  | 0.65M  | 4.83     | -         |
+| CondenseNet-110  | 98.2M  | 0.79M  | 4.63     | -         |
+| CondenseNet-122  | 116.7M | 0.95M  | 4.48     | -         |
+| CondenseNet-182* | 513M   | 4.2M   | 3.76     | 18.47     |
 
 (* trained 600 epochs)
 
 ### Inference time on ARM platform
 
-| Model | FLOPs | Top-1 | Time(s) |
-|---|---|---|---|
-| VGG-16 | 15,300M | 28.5 | 354 |
-| ResNet-18 | 1,818M | 30.2 | 8.14 |
-| 1.0 MobileNet-224 | 569M | 29.4 | 1.96 |
-| CondenseNet-74 (C=G=4) | 529M | 26.2 | 1.89 |
-| CondenseNet-74 (C=G=8) | 274M | 29.0 | 0.99 |
+| Model                  | FLOPs   | Top-1 | Time(s) |
+| ---------------------- | ------- | ----- | ------- |
+| VGG-16                 | 15,300M | 28.5  | 354     |
+| ResNet-18              | 1,818M  | 30.2  | 8.14    |
+| 1.0 MobileNet-224      | 569M    | 29.4  | 1.96    |
+| CondenseNet-74 (C=G=4) | 529M    | 26.2  | 1.89    |
+| CondenseNet-74 (C=G=8) | 274M    | 29.0  | 0.99    |
 
 ## Contact
 liushichen95@gmail.com  
