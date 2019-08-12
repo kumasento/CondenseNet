@@ -23,7 +23,7 @@ parser.add_argument('--model',
                     help='model to train the dataset')
 parser.add_argument('-j',
                     '--workers',
-                    default=8,
+                    default=4,
                     type=int,
                     metavar='N',
                     help='number of data loading workers (default: 4)')
