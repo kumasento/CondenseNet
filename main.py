@@ -8,6 +8,7 @@ import os
 import shutil
 import time
 import math
+import numpy as np
 import warnings
 import models
 from utils import convert_model, measure_model
@@ -182,9 +183,6 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 
-torch.manual_seed(args.manual_seed)
-torch.cuda.manual_seed_all(args.manual_seed)
-
 best_prec1 = 0
 
 
@@ -204,6 +202,12 @@ def main():
         (args.model, int(n_params), int(n_flops))
     del (model)
     print(args)
+
+    torch.manual_seed(args.manual_seed)
+    # torch.cuda.manual_seed_all(args.manual_seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    np.random.seed(args.manual_seed)
 
     ### Create model
     model = getattr(models, args.model)(args)
@@ -248,8 +252,6 @@ def main():
         args.evaluate = True
         state_dict = torch.load(args.evaluate_from)['state_dict']
         model.load_state_dict(state_dict)
-
-    cudnn.benchmark = True
 
     ### Data loading
     dataset_dir = args.dataset_dir if args.dataset_dir is not None else '../data'
